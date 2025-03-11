@@ -39,15 +39,17 @@
         <th>Destination</th>
         <th>Distance in Miles</th>
         <th>Distance in Kilometers</th>
+        <th>Search date</th>
       </tr>
       </thead>
       <tbody>
       {#each history as entry}
         <tr>
-          <td>{entry.source}</td>
-          <td>{entry.destination}</td>
+          <td>{entry.source.name}</td>
+          <td>{entry.destination.name}</td>
           <td>{entry.distanceInKMs}</td>
           <td>{(parseFloat(entry.distanceInKMs) * 0.621371).toFixed(3)}</td>
+          <td>{new Date(entry.createdAt).toLocaleString('en-GB', { hour12: true })}</td>
         </tr>
       {/each}
       </tbody>

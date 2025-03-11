@@ -1,8 +1,16 @@
 import mongoose from 'mongoose'
 
 const locationSchema = new mongoose.Schema({
-  source: { type: String, required: true },
-  destination: { type: String, required: true },
+  source: {
+    name: { type: String, required: true },
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true },
+  },
+  destination: {
+    name: { type: String, required: true },
+    lat: { type: Number, required: true },
+    lng: { type: Number, required: true },
+  },
   distanceInKMs: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
 })
