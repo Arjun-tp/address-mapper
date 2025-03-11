@@ -3,6 +3,7 @@ import cors from 'cors'
 import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js'
+import routes from './routes/index.js'
 
 dotenv.config()
 
@@ -20,6 +21,7 @@ const startServer = async () => {
     app.use(express.json())
     app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }))
 
+    app.use('/', routes)
     // Start the server after DB connection
     app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
   } catch (error) {
