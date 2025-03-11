@@ -11,14 +11,19 @@
       const response = await axios.get('http://localhost:7004/history');
       history = response.data.data;
     } catch (error) {
-      errorMessage = 'Failed to fetch history. Please try again.';
+      errorMessage = `Failed to fetch history. Please try again. ${error}`
     }
   });
 </script>
 
 <main class="container mt-5">
-  <h1 class="display-5">Historical Queries</h1>
-  <p class="text-muted">Previous distance calculations.</p>
+  <div class="d-flex justify-content-between align-items-center">
+    <h1 class="display-5">Historical Queries</h1>
+    <a href="/" class="btn btn-outline-dark">Go Back</a>
+  </div>
+
+
+  <p class="text-muted">History of the user's queries.</p>
 
   <!-- Show Error Message if API Fails -->
   {#if errorMessage}
@@ -51,5 +56,5 @@
     <p class="text-center mt-4">No history available.</p>
   {/if}
 
-  <a href="/" class="btn btn-primary mt-3">Go Back</a>
+
 </main>

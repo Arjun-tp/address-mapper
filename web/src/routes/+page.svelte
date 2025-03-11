@@ -33,7 +33,7 @@
         distance = `${kmDistance} km / ${milesDistance} mi`;
       }
     } catch (err) {
-      errorMessage = 'Failed to fetch distance. Please try again.';
+      errorMessage = `Failed to fetch distance. Please try again. ${err}`;
     }
   }
 </script>
@@ -86,7 +86,8 @@
 
   <!-- Calculate Button -->
   <div class="mt-4">
-    <button class="btn btn-danger w-15 d-flex align-items-center justify-content-center" on:click={calculateDistance}>
+    <button class="btn btn-danger w-15 d-flex align-items-center justify-content-center" on:click={calculateDistance}
+    disabled={!destination || !source}>
       Calculate Distance <i class="bi bi-arrow-right ms-2"></i>
     </button>
   </div>
