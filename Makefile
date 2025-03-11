@@ -1,6 +1,6 @@
 # Build and run the backend service
 docker-backend:
-	docker build -t backend ./backend && docker run -p 5000:5000 backend
+	docker build -t backend ./backend && docker run -p 7004:7004 backend
 
 # Build and run the frontend service
 docker-frontend:
@@ -29,3 +29,11 @@ docker-logs-backend:
 # View logs of frontend service
 docker-logs-frontend:
 	docker logs -f $(docker ps -q --filter ancestor=frontend)
+
+# Run ESLint to fix formatting issues
+lint-backend:
+	@echo "Linting code..."
+	npx eslint --config backend/eslint.config.js "backend/**/*.js" --fix && npx prettier --write "backend/**/*.js"
+	
+start-backend:
+	cd backend && node server.js

@@ -4,7 +4,7 @@ services:
   backend:
     build: ./backend
     ports:
-      - "5000:5000"
+      - "7004:7004"
     environment:
       - MONGO_URI=${MONGO_URI}
     depends_on:
