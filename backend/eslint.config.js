@@ -1,6 +1,6 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import prettier from 'eslint-config-prettier';
+import js from '@eslint/js'
+import globals from 'globals'
+import prettier from 'eslint-config-prettier'
 
 /* @type {import('eslint').Linter.FlatConfig[]} */
 export default [
@@ -27,4 +27,4 @@ export default [
       'no-console': 'off',
     },
   },
-];
+]

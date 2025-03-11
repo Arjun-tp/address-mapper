@@ -34,6 +34,8 @@ docker-logs-frontend:
 lint-backend:
 	@echo "Linting code..."
 	npx eslint --config backend/eslint.config.js "backend/**/*.js" --fix && npx prettier --write "backend/**/*.js"
-	
+
+# Run backend
 start-backend:
+	@echo "Starting backend services..."
 	cd backend && node server.js
