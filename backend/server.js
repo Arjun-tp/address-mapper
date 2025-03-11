@@ -23,9 +23,9 @@ const startServer = async () => {
 
     app.use('/', routes)
     // Start the server after DB connection
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
+    app.listen(PORT, () => console.log(`Server started running on port ${PORT}`))
   } catch (error) {
-    console.error('❌ Failed to start the server:', error)
+    console.error('Failed to start the server:', error)
     process.exit(1)
   }
 }
