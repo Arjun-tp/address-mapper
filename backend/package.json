@@ -3,10 +3,17 @@
   "version": "1.0.0",
   "description": "This is the backend service for address mapper",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint src/**/*.js"
   },
   "author": "Arjun-Tp",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "prettier": "^3.5.3"
+  }
 }
