@@ -1,0 +1,12 @@
+{
+  "name": "address-mapper-backend",
+  "version": "1.0.0",
+  "description": "This is the backend service for address mapper",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Arjun-Tp",
+  "license": "ISC"
+}
