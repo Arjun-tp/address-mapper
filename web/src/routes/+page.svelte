@@ -34,7 +34,7 @@
         distance = `${kmDistance} km / ${milesDistance} mi`;
       }
     } catch (err) {
-      errorMessage = `Failed to fetch distance. Please try again. ${err}`;
+      errorMessage = `Failed to fetch distance. Please try again.`;
     }
   }
 </script>
