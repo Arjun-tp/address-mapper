@@ -1,12 +1,12 @@
 import axios from 'axios'
 import Location from '../models/Location.js'
-
-const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search'
+import { apiUrls } from '../config/constant.js'
+import { google_config } from '../config/vars.js'
 
 // Function to get latitude & longitude from an address
 const getCoordinates = async (address) => {
   try {
-    const response = await axios.get(NOMINATIM_URL, {
+    const response = await axios.get(apiUrls.NOMINATIM_URL, {
       params: { q: address, format: 'json' },
     })
     if (!response.data.length) throw new Error(`Invalid address: ${address}`)
@@ -33,9 +33,31 @@ export const calculateDistance = async (req, res) => {
     // Get coordinates
     const sourceCoords = await getCoordinates(source)
     const destCoords = await getCoordinates(destination)
-    console.log('sourceCoords------', sourceCoords)
-    console.log('destCoords------', destCoords)
-    // TODO Calculate distance
+
+    const requestBody = {
+      origin: {
+        location: {
+          latLng: { latitude: sourceCoords.lat, longitude: sourceCoords.lon },
+        },
+      },
+      destination: {
+        location: {
+          latLng: { latitude: destCoords.lat, longitude: destCoords.lon },
+        },
+      },
+      travelMode: 'DRIVE',
+      languageCode: 'en-US',
+      units: 'METRIC',
+    }
+
+
+    // Send request to Google Routes API
+    const response = await axios.post(apiUrls.GOOGLE_URL, requestBody, {
+      headers: {
+        'X-Goog-Api-Key': google_config.GOOGLE_API_KEY,
+        'X-Goog-FieldMask': 'routes.distanceMeters,routes.duration',
+      },
+    })
 
     // Save the data to MongoDB
     const saveLocation = new Location({
@@ -49,7 +71,7 @@ export const calculateDistance = async (req, res) => {
         lat: destCoords.lat,
         lng: destCoords.lon,
       },
-      distanceInKMs: 23.945859,
+      distanceInKMs: response.data.routes[0].distanceMeters / 1000,
     })
 
     await saveLocation.save()
