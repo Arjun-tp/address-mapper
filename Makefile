@@ -39,3 +39,8 @@ lint-backend:
 start-backend:
 	@echo "Starting backend services..."
 	cd backend && node server.js
+
+# Run frontend
+start-web:
+	@echo "Starting frontend services..."
+	cd web && npm run dev
