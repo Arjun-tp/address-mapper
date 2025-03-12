@@ -15,11 +15,10 @@ const startServer = async () => {
   try {
     // Connect to MongoDB first
     await connectDB()
-
     // Middleware
     app.use(cors())
     app.use(express.json())
-    app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }))
+    app.use(rateLimit({ windowMs: 30 * 1000, max: 10 }))
 
     app.use('/', routes)
     // Start the server after DB connection
