@@ -1,22 +1,22 @@
 version: "3.8"
 
 services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     ports:
       - "7004:7004"
     environment:
-      - MONGO_URI=${MONGO_URI}
-    depends_on:
-      - mongodb
-
-  mongodb:
-    image: mongo
-    container_name: mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-
-volumes:
-  mongo-data:
+      - NODE_ENV=production
+    restart: unless-stopped
