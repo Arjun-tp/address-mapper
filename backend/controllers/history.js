@@ -5,7 +5,7 @@ export const getHistory = async (req, res) => {
     let { page, limit } = req.query
 
     page = parseInt(page) || 1
-    limit = parseInt(limit) || 10
+    limit = parseInt(limit) || 5
 
     const skip = (page - 1) * limit
 

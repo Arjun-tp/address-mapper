@@ -5,7 +5,7 @@
   let history = [];
   let errorMessage = '';
   let page = 1;
-  let limit = 10;
+  let limit = 5;
   let totalPages = 1;
 
   async function fetchHistory() {
