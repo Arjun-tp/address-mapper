@@ -4,16 +4,35 @@
 
   let history = [];
   let errorMessage = '';
+  let page = 1;
+  let limit = 10;
+  let totalPages = 1;
 
-  // Fetch history data when the page loads
-  onMount(async () => {
+  async function fetchHistory() {
     try {
-      const response = await axios.get('http://localhost:7004/history');
+      const response = await axios.get(`http://localhost:7004/history?page=${page}&limit=${limit}`);
       history = response.data.data;
+      totalPages = response.data.totalPages;
     } catch (error) {
-      errorMessage = `Failed to fetch history. Please try again. ${error}`
+      errorMessage = `Failed to fetch history. Please try again. ${error}`;
     }
-  });
+  }
+
+  function nextPage() {
+    if (page < totalPages) {
+      page++;
+      fetchHistory();
+    }
+  }
+
+  function prevPage() {
+    if (page > 1) {
+      page--;
+      fetchHistory();
+    }
+  }
+
+  onMount(fetchHistory);
 </script>
 
 <main class="container mt-5">
@@ -22,39 +41,46 @@
     <a href="/" class="btn btn-outline-dark">Go Back</a>
   </div>
 
-
   <p class="text-muted">History of the user's queries.</p>
 
-  <!-- Show Error Message if API Fails -->
   {#if errorMessage}
     <p class="text-danger">{errorMessage}</p>
   {/if}
 
-  <!-- Show Table Only if History Exists -->
   {#if history.length > 0}
     <table class="table table-bordered mt-3">
       <thead class="table-dark">
       <tr>
+        <th>#</th>
         <th>Source</th>
         <th>Destination</th>
-        <th>Distance in Miles</th>
         <th>Distance in Kilometers</th>
+        <th>Distance in Miles</th>
+        <th>Search Date</th>
       </tr>
       </thead>
       <tbody>
-      {#each history as entry}
+      {#each history as entry, index}
         <tr>
-          <td>{entry.source}</td>
-          <td>{entry.destination}</td>
+          <td>{(page - 1) * limit + index + 1}</td>
+          <td>{entry.source.name}</td>
+          <td>{entry.destination.name}</td>
           <td>{entry.distanceInKMs}</td>
           <td>{(parseFloat(entry.distanceInKMs) * 0.621371).toFixed(3)}</td>
+          <td>{new Date(entry.createdAt).toLocaleString('en-GB', { hour12: true })}</td>
         </tr>
       {/each}
       </tbody>
     </table>
+
+    <!-- Bootstrap Pagination -->
+    <div class="d-flex justify-content-between mt-3">
+      <button class="btn btn-outline-dark" on:click={prevPage} disabled={page === 1}>Previous</button>
+      <span>Page {page} of {totalPages}</span>
+      <button class="btn btn-outline-dark" on:click={nextPage} disabled={page === totalPages}>Next</button>
+    </div>
+
   {:else}
     <p class="text-center mt-4">No history available.</p>
   {/if}
-
-
 </main>

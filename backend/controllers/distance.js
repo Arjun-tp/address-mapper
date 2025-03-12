@@ -1,5 +1,5 @@
 import axios from 'axios'
-// import Location from '../models/Location.js'
+import Location from '../models/Location.js'
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search'
 
@@ -9,7 +9,6 @@ const getCoordinates = async (address) => {
     const response = await axios.get(NOMINATIM_URL, {
       params: { q: address, format: 'json' },
     })
-
     if (!response.data.length) throw new Error(`Invalid address: ${address}`)
     return {
       lat: parseFloat(response.data[0].lat),
@@ -34,9 +33,27 @@ export const calculateDistance = async (req, res) => {
     // Get coordinates
     const sourceCoords = await getCoordinates(source)
     const destCoords = await getCoordinates(destination)
-
+    console.log('sourceCoords------', sourceCoords)
+    console.log('destCoords------', destCoords)
     // TODO Calculate distance
-    console.log(sourceCoords, destCoords)
+
+    // Save the data to MongoDB
+    const saveLocation = new Location({
+      source: {
+        name: source,
+        lat: sourceCoords.lat,
+        lng: sourceCoords.lon,
+      },
+      destination: {
+        name: destination,
+        lat: destCoords.lat,
+        lng: destCoords.lon,
+      },
+      distanceInKMs: 23.945859,
+    })
+
+    await saveLocation.save()
+    return res.status(200).json(saveLocation)
   } catch (error) {
     res.status(500).json({ error: error.message })
   }

@@ -5,6 +5,6 @@ import { validateJoi } from '../middleware/validateJoi.js'
 
 const router = express.Router()
 
-router.get('/distance', validateJoi(locationSchema), calculateDistance)
+router.post('/distance', validateJoi(locationSchema), calculateDistance)
 
 export default router

@@ -22,8 +22,9 @@
         destination
       });
 
-      let kmDistance = response.data.distanceInKMs.toFixed(2);
-      let milesDistance = (parseFloat(kmDistance) * 0.621371).toFixed(2);
+
+      let kmDistance = (parseFloat(response.data.distanceInKMs)).toFixed(2);
+      let milesDistance = (kmDistance * 0.621371).toFixed(2);
 
       if (unit === 'km') {
         distance = `${kmDistance} km`;
@@ -33,7 +34,7 @@
         distance = `${kmDistance} km / ${milesDistance} mi`;
       }
     } catch (err) {
-      errorMessage = `Failed to fetch distance. Please try again. ${err}`;
+      errorMessage = `Failed to fetch distance. Please try again.`;
     }
   }
 </script>
