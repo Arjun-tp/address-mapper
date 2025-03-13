@@ -6,9 +6,11 @@ import { retryOnFail } from '../utils/retryOnFail.js'
 import { sleep } from '../utils/sleep.js'
 
 // Function to get latitude & longitude from an address
-const getCoordinates = async (address, attemptCount = MAX_NUMBER_OF_RETRIES) => {
+const getCoordinates = async (
+  address,
+  attemptCount = MAX_NUMBER_OF_RETRIES
+) => {
   try {
-
     const response = await axios.get(apiUrls.NOMINATIM_URL, {
       params: { q: address, format: 'json' },
     })
@@ -19,17 +21,20 @@ const getCoordinates = async (address, attemptCount = MAX_NUMBER_OF_RETRIES) => 
       data: {
         lat: parseFloat(response.data[0].lat),
         lon: parseFloat(response.data[0].lon),
-      }
+      },
     }
   } catch (err) {
     const attemptsLeft = attemptCount - 1
     if (!attemptsLeft)
       return {
         status: 'failed',
-        err
+        err,
       }
     // sleep to prevent rate limiting
-    await sleep({ reason: `[NOMINATIM-API] Call failed, ${attemptsLeft} attempts left`, ms: 500 })
+    await sleep({
+      reason: `[NOMINATIM-API] Call failed, ${attemptsLeft} attempts left`,
+      ms: 500,
+    })
     return await getCoordinates(address, attemptsLeft)
   }
 }
@@ -46,34 +51,50 @@ export const calculateDistance = async (req, res) => {
     }
 
     // Get coordinates
-    const [sourceCoords, destCoords] = await Promise.all([getCoordinates(source), getCoordinates(destination)])
+    const [sourceCoords, destCoords] = await Promise.all([
+      getCoordinates(source),
+      getCoordinates(destination),
+    ])
 
     if (sourceCoords.status === 'failed') {
       return res.status(400).json({
-        error: { message: `${source} is invalid address`, type: 'source' }
+        error: { message: `${source} is invalid address`, type: 'source' },
       })
     }
 
     if (destCoords.status === 'failed') {
       return res.status(400).json({
-        error: { message: `${destination} is invalid address`, type: 'destination' }
+        error: {
+          message: `${destination} is invalid address`,
+          type: 'destination',
+        },
       })
     }
 
-    if (sourceCoords.data.lat === destCoords.data.lat && sourceCoords.data.lon === destCoords.data.lon) {
-      return res.status(400)
+    if (
+      sourceCoords.data.lat === destCoords.data.lat &&
+      sourceCoords.data.lon === destCoords.data.lon
+    ) {
+      return res
+        .status(400)
         .json({ error: 'Source and destination cannot be the same' })
     }
 
     const requestBody = {
       origin: {
         location: {
-          latLng: { latitude: sourceCoords.data.lat, longitude: sourceCoords.data.lon },
+          latLng: {
+            latitude: sourceCoords.data.lat,
+            longitude: sourceCoords.data.lon,
+          },
         },
       },
       destination: {
         location: {
-          latLng: { latitude: destCoords.data.lat, longitude: destCoords.data.lon },
+          latLng: {
+            latitude: destCoords.data.lat,
+            longitude: destCoords.data.lon,
+          },
         },
       },
       travelMode: 'DRIVE',
@@ -90,11 +111,14 @@ export const calculateDistance = async (req, res) => {
       },
     })
 
-    const response = await retryOnFail({ promise: googlePromise, methodName: '[GOOGLE-API]' })
+    const response = await retryOnFail({
+      promise: googlePromise,
+      methodName: '[GOOGLE-API]',
+    })
 
-    const distanceMeters =  response?.data?.routes?.[0]?.distanceMeters 
-    
-    if (!distanceMeters || typeof distanceMeters !== 'number' ) {
+    const distanceMeters = response?.data?.routes?.[0]?.distanceMeters
+
+    if (!distanceMeters || typeof distanceMeters !== 'number') {
       throw new Error('[GOOGLE-API]: failed to fetch distance in meters')
     }
 

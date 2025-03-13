@@ -5,4 +5,4 @@ export const apiUrls = {
   NOMINATIM_URL: 'https://nominatim.openstreetmap.org/search',
 }
 
-export const MAX_NUMBER_OF_RETRIES = 3 
+export const MAX_NUMBER_OF_RETRIES = 3

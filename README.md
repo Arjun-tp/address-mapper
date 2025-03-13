@@ -1,49 +1,77 @@
 # Address-Mapper
 
+## Overview
+Address-Mapper is a **full-stack web application** built with **SvelteKit (Frontend)**, **Node.js + Express (Backend)**, and **MongoDB (Database)**. It maps addresses using **third-party APIs** and provides a user-friendly interface.
+This project supports **Docker deployment**, making it easy to set up locally and in production.
+
+## Tech Stack
+- **Frontend**: SvelteKit, Vite, Bootstrap
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB
+- **Deployment**: Docker, Docker Compose, Railway
+- **Linting & Formatting**: ESLint, Prettier
+- **Third Party APIs**: Nominatim, Google API
+
+
 ## Steps
 
-> Prequisite: Docker client should be running, env's should be added ( this will just make sure the third party apis are working )
+> Pre-requisite: Docker client should be running, envs should be added ( this will just make sure the third party apis are working )
 
 1. Clone the repo
 
-2. Add environment variables in /backend 
-
-3. Update variable `API_URL` and set it to localhost url [web/src/config/constant.js](./web/src/config/constant.js)
-
-4. On project root terminal run 
+2. Add environment variables in /backend before running the project, create a `.env` file inside the `backend` folder and add the following variables:
 
 ```bash
-make service
+  PORT=7004
+  MONGO_USERNAME= # MongoDB user name
+  MONGO_PASSWORD= # MongoDB password
+  MONGO_HOST= # MongoDB host
+  GOOGLE_API_KEY= # Google API key
+  ALLOWED_ORIGINS= # http://localhost:5173 for local development and testing
+```
+
+3. Update variable `API_URL` and set it to localhost url [web/src/config/constant.js](./web/src/config/constant.js)
+```bash
+   localHost url: http://localhost:7004
+```
+4. On project root terminal run 
+```bash
+  make service
 ```
 
 ## More commands 
 
-1️⃣ Lint and Format the Backend Code
-make lint-backend
+```bash
+  make lint-backend
+```
+Lint and Format the Backend Code.
 Fixes ESLint errors in the backend code (backend/**/*.js).
 Formats code using Prettier for consistent styling.
-2️⃣ Start the Backend
-make start-backend
-Navigates to the backend directory and starts the Node.js Express server.
+
+```bash
+  make start-backend
+```
+Starts the Backend. Navigates to the backend directory and starts the Node.js Express server.
 Runs on port 7004 by default.
-3️⃣ Start the Frontend
-make start-web
-Navigates to the web directory and starts the SvelteKit frontend.
+
+```bash
+  make start-web
+```
+Start the Frontend. Navigates to the web directory and starts the SvelteKit frontend.
 Runs the frontend on port 5173 by default.
-4️⃣ Start the Full Application with Docker
-make service
-Runs the entire application using Docker Compose.
-Automatically builds and starts:
-Frontend (SvelteKit)
-Backend (Node.js)
-MongoDB database
-Ensures everything is containerized for easy deployment.
-5️⃣ Build the Docker Containers
-make service-build
-Builds all Docker containers without starting them.
-Useful if you want to prepare images before deployment.
-6️⃣ Stop the Running Services
-make service-stop
+
+```bash
+  make service
+```
+Start the Full Application with Docker. Runs the entire application using Docker Compose.
+
+```bash
+  make service-build
+```
+Builds all Docker containers without starting them. Useful if you want to prepare images before deployment.
+
+```bash
+  make service-stop
+```
 Stops all running Docker containers gracefully.
-Preserves database data (since MongoDB runs in a Docker volume).
 
