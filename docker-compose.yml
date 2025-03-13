@@ -4,7 +4,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: web/Dockerfile
+      dockerfile: Dockerfile.web
     ports:
       - "5173:5173"
     depends_on:
@@ -14,7 +14,7 @@ services:
   backend:
     build:
       context: .
-      dockerfile: backend/Dockerfile
+      dockerfile: Dockerfile.backend
     ports:
       - "7004:7004"
     environment:
