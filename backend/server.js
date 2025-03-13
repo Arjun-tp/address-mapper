@@ -20,13 +20,13 @@ const startServer = async () => {
     app.use(helmet())
 
     // Middleware
-    app.use(cors(
-      {
+    app.use(
+      cors({
         origin: process.env.ALLOWED_ORIGINS || 'http://localhost:5173', // Allow frontend domain
-        methods: ["GET", "POST"], // Allowed HTTP methods
-        allowedHeaders: ["Content-Type", "Authorization"] // Allowed headers
-      }
-    ))
+        methods: ['GET', 'POST'], // Allowed HTTP methods
+        allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
+      })
+    )
     app.use(express.json())
     app.use(rateLimit({ windowMs: 30 * 1000, max: 10 }))
 
