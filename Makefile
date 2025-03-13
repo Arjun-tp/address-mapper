@@ -28,3 +28,8 @@ service-build:
 service-stop:
 	@echo "Killing docker containers..."
 	docker compose down
+
+# start tests
+test:
+	@echo "Starting tests..."
+	cd backend && npm run test

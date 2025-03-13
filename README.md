@@ -81,3 +81,8 @@ Builds all Docker containers without starting them. Useful if you want to prepar
 ```
 Stops all running Docker containers gracefully.
 
+```bash
+  make test
+```
+Start running the backed test cases.
+
