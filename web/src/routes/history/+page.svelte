@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
+  import {API_URL} from '../../config/constant.js'
 
   let history = [];
   let errorMessage = '';
@@ -10,7 +11,7 @@
 
   async function fetchHistory() {
     try {
-      const response = await axios.get(`http://localhost:7004/history?page=${page}&limit=${limit}`);
+      const response = await axios.get(`${API_URL}/history?page=${page}&limit=${limit}`);
       history = response.data.data;
       totalPages = response.data.totalPages;
     } catch (error) {
