@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit'
 import dotenv from 'dotenv'
 import connectDB from './config/db.js'
 import routes from './routes/index.js'
+import helmet from 'helmet'
 
 dotenv.config()
 
@@ -15,8 +16,17 @@ const startServer = async () => {
   try {
     // Connect to MongoDB first
     await connectDB()
+
+    app.use(helmet())
+
     // Middleware
-    app.use(cors())
+    app.use(cors(
+      {
+        origin: process.env.ALLOWED_ORIGINS || 'http://localhost:5173', // Allow frontend domain
+        methods: ["GET", "POST"], // Allowed HTTP methods
+        allowedHeaders: ["Content-Type", "Authorization"] // Allowed headers
+      }
+    ))
     app.use(express.json())
     app.use(rateLimit({ windowMs: 30 * 1000, max: 10 }))
 
