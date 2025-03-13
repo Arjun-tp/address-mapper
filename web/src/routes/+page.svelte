@@ -1,15 +1,18 @@
 <script>
   import axios from 'axios';
   import {API_URL} from '../config/constant.js'
+  import Toast from "../lib/toast.svelte";
+  import { showToast } from "../lib/stores/toastStore.js";
   
   let source = '';
   let destination = '';
-  let unit = 'miles';
+  let unit = 'both';
   let distance = null;
   let kmDistance = null;
   let milesDistance = null;
   let errorMessage = '';
 
+  // Auto complete
   /*
   let sourceSuggestions = [];
   let destinationSuggestions = [];
@@ -58,6 +61,7 @@
 
     if (!source || !destination) {
       errorMessage = 'Please enter both source and destination.';
+      showToast(errorMessage);
       return;
     }
 
@@ -72,8 +76,14 @@
 
       updateDistance();
     } catch (err) {
-      console.log(err);
-      errorMessage = `Failed to fetch distance. Please try again.`;
+      if (err?.response?.status === 429) {
+        errorMessage = err.response.data
+      } else if(err?.response?.data?.error?.message){
+        errorMessage = err.response.data.error.message
+      } else {
+        errorMessage = `Failed to fetch distance. Please try again.`;
+      }
+      showToast(errorMessage)
     }
   }
 
@@ -89,6 +99,8 @@
     }
   }
 </script>
+
+<Toast />
 
 <main class="container mt-5">
   <div class="card shadow-sm">
@@ -187,9 +199,9 @@
       </div>
 
       <!-- Error Message -->
-      {#if errorMessage}
-        <p class="text-danger mt-3 text-center">{errorMessage}</p>
-      {/if}
+      <!--{#if errorMessage}-->
+      <!--  <p class="text-danger mt-3 text-center">{errorMessage}</p>-->
+      <!--{/if}-->
     </div>
   </div>
 </main>
