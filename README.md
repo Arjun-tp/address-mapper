@@ -39,6 +39,12 @@ This project supports **Docker deployment**, making it easy to set up locally an
   make service
 ```
 
+## Hosting & Deployment
+The project is live and accessible at https://address-mapper-production-322e.up.railway.app.
+
+The application is deployed using **Railway**, and **Docker** is used for containerization, ensuring reliable deployment environments
+
+
 ## More commands 
 
 ```bash

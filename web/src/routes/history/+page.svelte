@@ -65,8 +65,8 @@
         <th>#</th>
         <th>Source</th>
         <th>Destination</th>
-        <th>Distance in Kilometers</th>
-        <th>Distance in Miles</th>
+        <th>Distance(Kms)</th>
+        <th>Distance(Miles)</th>
         <th>Search Date</th>
       </tr>
       </thead>
