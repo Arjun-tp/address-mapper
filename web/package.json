@@ -10,7 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"lint": "eslint . && prettier --check .",
 		"format": "prettier --write .",
-		"start": "npx serve build -l 5173"
+		"start": "vite preview"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
