@@ -1,6 +1,7 @@
 <script>
   import axios from 'axios';
-
+  import {API_URL} from '../config/constant.js'
+  
   let source = '';
   let destination = '';
   let unit = 'miles';
@@ -61,7 +62,7 @@
     }
 
     try {
-      const response = await axios.post('http://localhost:7004/location/distance', {
+      const response = await axios.post(`${API_URL}/location/distance`, {
         source,
         destination
       });
