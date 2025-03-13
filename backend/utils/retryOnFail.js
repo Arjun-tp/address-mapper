@@ -10,6 +10,7 @@ export const retryOnFail = async ({ promise, attemptCount, methodName }) => {
   } catch (err) {
     const attemptsLeft = attemptCount - 1
     if (!attemptsLeft) throw err
+
     // awaiting for some time
     await sleep({
       reason: `${methodName} Call failed, ${attemptsLeft} attempts left`,

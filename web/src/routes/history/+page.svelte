@@ -1,7 +1,10 @@
 <script>
   import { onMount } from 'svelte';
   import axios from 'axios';
-  import {API_URL} from '../../config/constant.js'
+  import { API_URL } from '../../config/constant.js'
+  import Toast from "../../lib/toast.svelte";
+  import { showToast } from "../../lib/stores/toastStore.js";
+
 
   let history = [];
   let errorMessage = '';
@@ -15,7 +18,12 @@
       history = response.data.data;
       totalPages = response.data.totalPages;
     } catch (error) {
-      errorMessage = `Failed to fetch history. Please try again. ${error}`;
+      if(error?.response?.data){
+        errorMessage = error?.response?.data
+      } else {
+        errorMessage = `Failed to fetch history. Please try again`;
+      }
+      showToast(errorMessage);
     }
   }
 
@@ -36,6 +44,8 @@
   onMount(fetchHistory);
 </script>
 
+<Toast />
+
 <main class="container mt-5">
   <div class="d-flex justify-content-between align-items-center">
     <h1 class="display-5">Historical Queries</h1>
@@ -44,9 +54,9 @@
 
   <p class="text-muted">History of the user's queries.</p>
 
-  {#if errorMessage}
-    <p class="text-danger">{errorMessage}</p>
-  {/if}
+  <!--{#if errorMessage}-->
+  <!--  <p class="text-danger">{errorMessage}</p>-->
+  <!--{/if}-->
 
   {#if history.length > 0}
     <table class="table table-bordered mt-3">
