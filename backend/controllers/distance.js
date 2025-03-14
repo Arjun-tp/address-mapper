@@ -78,7 +78,7 @@ const getDistance = (lat1, lon1, lat2, lon2) => {
  * @function calculateDistance
  * @param {import("express").Request} req - Express request object containing `source` and `destination` in the request body.
  * @param {import("express").Response} res - Express response object for returning the calculated distance.
- * @returns {Promise<void>} - Sends the response with distance data or an error message.
+ * @returns {Promise<e.Response<any, Record<string, any>>>} - Sends the response with distance data or an error message.
  */
 export const calculateDistance = async (req, res) => {
   try {
@@ -189,7 +189,7 @@ export const calculateDistance = async (req, res) => {
         lat: destCoords.data.lat,
         lng: destCoords.data.lon,
       },
-      distanceInKMs: distanceMeters / 1000,
+      distanceInKMs: (distanceMeters / 1000).toFixed(3),
     })
 
     await saveLocation.save()

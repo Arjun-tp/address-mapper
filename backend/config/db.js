@@ -1,12 +1,10 @@
 import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-
-dotenv.config()
+import { mongo_config } from './vars.js'
 
 const connectDB = async () => {
   try {
     console.log('Connecting to MongoDB...')
-    const mongoURI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/address_mapper`
+    const mongoURI = `mongodb+srv://${mongo_config.MONGO_USERNAME}:${mongo_config.MONGO_PASSWORD}@${mongo_config.MONGO_HOST}/address_mapper`
     await mongoose.connect(mongoURI)
     console.log('*** MongoDB Connected ***')
   } catch (error) {
