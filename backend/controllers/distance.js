@@ -5,7 +5,15 @@ import { google_config } from '../config/vars.js'
 import { retryOnFail } from '../utils/retryOnFail.js'
 import { sleep } from '../utils/sleep.js'
 
-// Function to get latitude & longitude from an address
+/**
+ * Retrieves latitude and longitude for a given address using the Nominatim API.
+ *
+ * @async
+ * @function getCoordinates
+ * @param {string} address - The address to geocode.
+ * @param {number} [attemptCount=MAX_NUMBER_OF_RETRIES] - The number of retry attempts for API failures.
+ * @returns {Promise<{status: string, data?: {lat: number, lon: number}, err?: Error}>} - Returns the coordinates on success or an error on failure.
+ */
 const getCoordinates = async (
   address,
   attemptCount = MAX_NUMBER_OF_RETRIES
@@ -39,6 +47,39 @@ const getCoordinates = async (
   }
 }
 
+/**
+ * Calculates the great-circle distance (orthodromic distance) between two geographical points using the Haversine formula.
+ *
+ * @function getDistance
+ * @param {number} lat1 - Latitude of the first location.
+ * @param {number} lon1 - Longitude of the first location.
+ * @param {number} lat2 - Latitude of the second location.
+ * @param {number} lon2 - Longitude of the second location.
+ * @returns {number} - Distance in kilometers.
+ */
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const earthRadius = 6371
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return earthRadius * c // Distance in km
+}
+
+/**
+ * Calculates the distance between a source and a destination using Google Routes API or falls back to the Haversine formula if the API fails.
+ *
+ * @async
+ * @function calculateDistance
+ * @param {import("express").Request} req - Express request object containing `source` and `destination` in the request body.
+ * @param {import("express").Response} res - Express response object for returning the calculated distance.
+ * @returns {Promise<void>} - Sends the response with distance data or an error message.
+ */
 export const calculateDistance = async (req, res) => {
   try {
     const { source, destination } = req.body
@@ -116,7 +157,21 @@ export const calculateDistance = async (req, res) => {
       methodName: '[GOOGLE-API]',
     })
 
-    const distanceMeters = response?.data?.routes?.[0]?.distanceMeters
+    let distanceMeters = response?.data?.routes?.[0]?.distanceMeters
+
+    // If Google API fails, fallback to Haversine formula or Orthodromic distance
+    if (!distanceMeters || typeof distanceMeters !== 'number') {
+      console.log(
+        '[GOOGLE-API] Failed to fetch distance, using Haversine formula'
+      )
+      distanceMeters =
+        getDistance(
+          sourceCoords.data.lat,
+          sourceCoords.data.lon,
+          destCoords.data.lat,
+          destCoords.data.lon
+        ) * 1000 // Convert to meters
+    }
 
     if (!distanceMeters || typeof distanceMeters !== 'number') {
       throw new Error('[GOOGLE-API]: failed to fetch distance in meters')

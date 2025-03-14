@@ -1,4 +1,4 @@
-# Address-Mapper
+# Address Mapper
 
 ## Overview
 Address-Mapper is a **full-stack web application** built with **SvelteKit (Frontend)**, **Node.js + Express (Backend)**, and **MongoDB (Database)**. It calculates the distance between addresses and provides a user-friendly interface.
