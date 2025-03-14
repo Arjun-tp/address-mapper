@@ -52,8 +52,6 @@
     <a href="/" class="btn btn-outline-dark">Go Back</a>
   </div>
 
-  <p class="text-muted">History of the user's queries.</p>
-
   <!--{#if errorMessage}-->
   <!--  <p class="text-danger">{errorMessage}</p>-->
   <!--{/if}-->
