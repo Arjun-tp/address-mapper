@@ -7,13 +7,13 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://localhost:7004',
-      description: 'Development Server',
-    },
-    {
       url: 'https://address-mapper-production.up.railway.app',
       description: 'Production Server',
     },
+    {
+      url: 'http://localhost:7004',
+      description: 'Development Server, use this only while doing local development',
+    }
   ],
   paths: {
     '/health': {
