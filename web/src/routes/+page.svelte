@@ -110,7 +110,7 @@
     </div>
 
     <div class="card-body">
-      <p class="text-muted">Prototype web application for calculating distances between addresses.</p>
+      <p class="text-muted">Enter the correct full address of source and destination.</p>
 
       <!-- Input Fields with Autocomplete -->
       <!--  <div class="row mt-4">-->

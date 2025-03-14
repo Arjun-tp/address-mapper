@@ -1,5 +1,15 @@
 import Location from '../models/Location.js'
 
+/**
+ * Retrieves paginated location history from the database.
+ *
+ * @async
+ * @function getHistory
+ * @param req - request object containing query parameters `page` and `limit`.
+ * @param res - response object used to return the paginated history data.
+ * @returns {Promise<void>} Responds with a JSON object containing the paginated history data.
+ */
+
 export const getHistory = async (req, res) => {
   try {
     let { page, limit } = req.query
