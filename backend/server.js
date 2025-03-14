@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import connectDB from './config/db.js'
 import routes from './routes/index.js'
 import helmet from 'helmet'
+import { setupSwagger } from './config/swaggerConfig.js'
 
 dotenv.config()
 
@@ -28,6 +29,9 @@ const startServer = async () => {
       })
     )
     app.use(express.json())
+
+    setupSwagger(app)
+
     app.use(rateLimit({ windowMs: 30 * 1000, max: 10 }))
 
     app.use('/', routes)
