@@ -25,6 +25,8 @@
     "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "mongoose": "^8.12.1",
-    "sinon": "^19.0.2"
+    "sinon": "^19.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }
