@@ -105,10 +105,6 @@
       );
     })();
   }
-
-
-
-
 </script>
 
 <Toast />
@@ -172,11 +168,6 @@
         </p>
       {/if}
 
-
-      <!-- Error Message -->
-      <!--{#if errorMessage}-->
-      <!--  <p class="text-danger mt-3 text-center">{errorMessage}</p>-->
-      <!--{/if}-->
     </div>
   </div>
 </main>
