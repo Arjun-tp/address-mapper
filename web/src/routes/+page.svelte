@@ -19,6 +19,7 @@
   let sourceInput;
   let destinationInput;
   let google
+  let isLoading = false
   const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY
 
   onMount(async () => {
@@ -53,10 +54,12 @@
   async function calculateDistance() {
     errorMessage = '';
     distance = null;
+    isLoading = true;
 
     if (!source || !destination) {
       errorMessage = 'Please enter both source and destination.';
       showToast(errorMessage);
+      isLoading = false;
       return;
     }
 
@@ -75,6 +78,7 @@
       milesDistance = (kmDistance * 0.621371).toFixed(2);
 
       updateDistance();
+
     } catch (err) {
       if (err?.response?.status === 429) {
         errorMessage = err.response.data
@@ -84,6 +88,7 @@
         errorMessage = `Failed to fetch distance. Please try again.`;
       }
       showToast(errorMessage)
+      isLoading = false;
     }
   }
 
@@ -97,6 +102,7 @@
     } else {
       distance = `${kmDistance} km / ${milesDistance} mi`;
     }
+    isLoading = false;
   }
 
   let mapDiv;
@@ -199,7 +205,16 @@
           <b>* If there are no drive routes found between the location, the map won't show the route</b>
         </p>
       {/if}
-
+      {#if isLoading}
+        <div class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-white bg-opacity-50 backdrop-blur z-3">
+          <div class="bg-white p-4 rounded-4 shadow text-center">
+            <div class="spinner-border text-danger" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-3 mb-0">Fetching the route and distance...</p>
+          </div>
+        </div>
+      {/if}
     </div>
   </div>
 </main>
