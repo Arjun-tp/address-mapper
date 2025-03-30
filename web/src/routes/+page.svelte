@@ -3,6 +3,7 @@
   import {API_URL} from '../config/constant.js'
   import Toast from "../lib/toast.svelte";
   import { showToast } from "../lib/stores/toastStore.js";
+  import { onMount } from "svelte";
 
   let source = '';
   let destination = '';
@@ -15,7 +16,39 @@
   let sourceLng = null;
   let destLat = null;
   let destLng = null;
+  let sourceInput;
+  let destinationInput;
+  let google
   const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY
+
+  onMount(async () => {
+    const { Loader } = await import('@googlemaps/js-api-loader');
+    const loader = new Loader({
+      apiKey: API_KEY,
+      version: 'weekly',
+      libraries: ['places']
+    });
+
+    await loader.load();
+    google = window.google;
+
+    const sourceAutocomplete = new google.maps.places.Autocomplete(sourceInput);
+    const destAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+
+    sourceAutocomplete.addListener("place_changed", () => {
+      const place = sourceAutocomplete.getPlace();
+      if (place?.formatted_address) {
+        source = place.formatted_address;
+      }
+    });
+
+    destAutocomplete.addListener("place_changed", () => {
+      const place = destAutocomplete.getPlace();
+      if (place?.formatted_address) {
+        destination = place.formatted_address;
+      }
+    });
+  });
 
   async function calculateDistance() {
     errorMessage = '';
@@ -70,39 +103,26 @@
 
   $: if (sourceLat && sourceLng && destLat && destLng && mapDiv) {
     (async () => {
-      const { Loader } = await import('@googlemaps/js-api-loader');
-
-      const loader = new Loader({
-        apiKey: API_KEY,
-        version: 'weekly'
-      });
-
-      await loader.load();
-      const google = window.google;
       const map = new google.maps.Map(mapDiv, {
-        center: { lat: sourceLat, lng: sourceLng },
+        center: {lat: sourceLat, lng: sourceLng},
         zoom: 7
       });
 
       const directionsService = new google.maps.DirectionsService();
       const directionsRenderer = new google.maps.DirectionsRenderer();
-
       directionsRenderer.setMap(map);
 
-      directionsService.route(
-              {
-                origin: { lat: sourceLat, lng: sourceLng },
-                destination: { lat: destLat, lng: destLng },
-                travelMode: google.maps.TravelMode.DRIVING
-              },
-              (response, status) => {
-                if (status === 'OK') {
-                  directionsRenderer.setDirections(response);
-                } else {
-                  console.error('Directions request failed due to: ' + status);
-                }
-              }
-      );
+      directionsService.route({
+        origin: {lat: sourceLat, lng: sourceLng},
+        destination: {lat: destLat, lng: destLng},
+        travelMode: google.maps.TravelMode.DRIVING
+      }, (response, status) => {
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
+        } else {
+          console.error('Directions request failed due to: ' + status);
+        }
+      });
     })();
   }
 </script>
@@ -123,11 +143,23 @@
       <div class="row mt-3">
         <div class="col-md-6">
           <label class="form-label">Source Address</label>
-          <input type="text" class="form-control" bind:value={source} placeholder="Enter Source Address" />
+          <input
+                  type="text"
+                  class="form-control"
+                  bind:this={sourceInput}
+                  bind:value={source}
+                  placeholder="Enter Source Address"
+          />
         </div>
         <div class="col-md-6">
           <label class="form-label">Destination Address</label>
-          <input type="text" class="form-control" bind:value={destination} placeholder="Enter Destination Address" />
+          <input
+                type="text"
+                class="form-control"
+                bind:this={destinationInput}
+                bind:value={destination}
+                placeholder="Enter Destination Address"
+          />
         </div>
       </div>
 
