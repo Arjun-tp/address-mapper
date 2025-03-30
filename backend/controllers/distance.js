@@ -47,6 +47,35 @@ const getCoordinates = async (
   }
 }
 
+const getCoordinatesFromGoogle = async (placeName) => {
+  try {
+    const response = await axios.get(apiUrls.GOOGLE_GEOCODING, {
+      params: {
+        address: placeName,
+        key: google_config.GOOGLE_API_KEY,
+      },
+    })
+
+    if (response.data.status !== 'OK') {
+      throw new Error(
+        `Geocoding failed for ${placeName}: ${response.data.status}`
+      )
+    }
+
+    const location = response.data.results[0].geometry.location
+    return {
+      status: 'success',
+      data: {
+        lat: location.lat,
+        lon: location.lng,
+      },
+    }
+  } catch (error) {
+    console.error('[GOOGLE-GEOCODING]', error.message)
+    return null
+  }
+}
+
 /**
  * Calculates the great-circle distance (orthodromic distance) between two geographical points using the Haversine formula.
  *
@@ -92,24 +121,38 @@ export const calculateDistance = async (req, res) => {
     }
 
     // Get coordinates
-    const [sourceCoords, destCoords] = await Promise.all([
+    let [sourceCoords, destCoords] = await Promise.all([
       getCoordinates(source),
       getCoordinates(destination),
     ])
 
     if (sourceCoords.status === 'failed') {
-      return res.status(400).json({
-        error: { message: `${source} is invalid address`, type: 'source' },
-      })
+      const [googleSourceCoords] = await Promise.all([
+        getCoordinatesFromGoogle(source),
+      ])
+
+      if (!googleSourceCoords) {
+        return res.status(400).json({
+          error: { message: `${source} is invalid address`, type: 'source' },
+        })
+      }
+      sourceCoords = googleSourceCoords
     }
 
     if (destCoords.status === 'failed') {
-      return res.status(400).json({
-        error: {
-          message: `${destination} is invalid address`,
-          type: 'destination',
-        },
-      })
+      const [googleDestCoords] = await Promise.all([
+        getCoordinatesFromGoogle(destination),
+      ])
+      if (!googleDestCoords) {
+        return res.status(400).json({
+          error: {
+            message: `${destination} is invalid address`,
+            type: 'destination',
+          },
+        })
+      }
+
+      destCoords = googleDestCoords
     }
 
     if (

@@ -12,8 +12,9 @@ const swaggerDefinition = {
     },
     {
       url: 'http://localhost:7004',
-      description: 'Development Server, use this only while doing local development',
-    }
+      description:
+        'Development Server, use this only while doing local development',
+    },
   ],
   paths: {
     '/health': {
