@@ -3,7 +3,7 @@
   import {API_URL} from '../config/constant.js'
   import Toast from "../lib/toast.svelte";
   import { showToast } from "../lib/stores/toastStore.js";
-  
+
   let source = '';
   let destination = '';
   let unit = 'both';
@@ -11,49 +11,11 @@
   let kmDistance = null;
   let milesDistance = null;
   let errorMessage = '';
-
-  // Auto complete
-  /*
-  let sourceSuggestions = [];
-  let destinationSuggestions = [];
-
-  async function fetchSuggestions(query, type) {
-    if (!query) {
-      if (type === 'source') sourceSuggestions = [];
-      if (type === 'destination') destinationSuggestions = [];
-      return;
-    }
-
-    try {
-      const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
-        params: {
-          q: query,
-          format: 'json',
-          addressdetails: 1,
-          limit: 5
-        }
-      });
-
-      if (type === 'source') {
-        sourceSuggestions = response.data;
-      } else {
-        destinationSuggestions = response.data;
-      }
-    } catch (error) {
-      console.error('Error fetching autocomplete suggestions:', error);
-    }
-  }
-
-  function selectSuggestion(suggestion, type) {
-    if (type === 'source') {
-      source = suggestion.display_name;
-      sourceSuggestions = [];
-    } else {
-      destination = suggestion.display_name;
-      destinationSuggestions = [];
-    }
-  }
-  */
+  let sourceLat = null;
+  let sourceLng = null;
+  let destLat = null;
+  let destLng = null;
+  const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY
 
   async function calculateDistance() {
     errorMessage = '';
@@ -70,6 +32,11 @@
         source,
         destination
       });
+      sourceLat = response.data.source.lat;
+      sourceLng = response.data.source.lng;
+      destLat = response.data.destination.lat;
+      destLng = response.data.destination.lng;
+
 
       kmDistance = (parseFloat(response.data.distanceInKMs)).toFixed(2);
       milesDistance = (kmDistance * 0.621371).toFixed(2);
@@ -98,6 +65,50 @@
       distance = `${kmDistance} km / ${milesDistance} mi`;
     }
   }
+
+  let mapDiv;
+
+  $: if (sourceLat && sourceLng && destLat && destLng && mapDiv) {
+    (async () => {
+      const { Loader } = await import('@googlemaps/js-api-loader');
+
+      const loader = new Loader({
+        apiKey: API_KEY,
+        version: 'weekly'
+      });
+
+      await loader.load();
+      const google = window.google;
+      const map = new google.maps.Map(mapDiv, {
+        center: { lat: sourceLat, lng: sourceLng },
+        zoom: 7
+      });
+
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+
+      directionsRenderer.setMap(map);
+
+      directionsService.route(
+              {
+                origin: { lat: sourceLat, lng: sourceLng },
+                destination: { lat: destLat, lng: destLng },
+                travelMode: google.maps.TravelMode.DRIVING
+              },
+              (response, status) => {
+                if (status === 'OK') {
+                  directionsRenderer.setDirections(response);
+                } else {
+                  console.error('Directions request failed due to: ' + status);
+                }
+              }
+      );
+    })();
+  }
+
+
+
+
 </script>
 
 <Toast />
@@ -111,50 +122,6 @@
 
     <div class="card-body">
       <p class="text-muted">Enter the correct full address of source and destination.</p>
-
-      <!-- Input Fields with Autocomplete -->
-      <!--  <div class="row mt-4">-->
-      <!--    <div class="col-md-6">-->
-      <!--      <label class="form-label fw-bold">Source Address</label>-->
-      <!--      <input-->
-      <!--        type="text"-->
-      <!--        class="form-control"-->
-      <!--        bind:value={source}-->
-      <!--        on:input={(e) => fetchSuggestions(e.target.value, 'source')}-->
-      <!--        placeholder="Enter Source Address"-->
-      <!--      />-->
-      <!--      {#if sourceSuggestions.length > 0}-->
-      <!--        <ul class="list-group position-absolute w-100 mt-1 shadow">-->
-      <!--          {#each sourceSuggestions as suggestion}-->
-      <!--            <li class="list-group-item list-group-item-action" on:click={() => selectSuggestion(suggestion, 'source')} role="button">-->
-      <!--              {suggestion.display_name}-->
-      <!--            </li>-->
-      <!--          {/each}-->
-      <!--        </ul>-->
-      <!--      {/if}-->
-      <!--    </div>-->
-      <!--    <div class="col-md-6 position-relative">-->
-      <!--      <label class="form-label fw-bold">Destination Address</label>-->
-      <!--      <input-->
-      <!--        type="text"-->
-      <!--        class="form-control"-->
-      <!--        bind:value={destination}-->
-      <!--        on:input={(e) => fetchSuggestions(e.target.value, 'destination')}-->
-      <!--        placeholder="Enter Destination Address"-->
-      <!--      />-->
-      <!--      {#if destinationSuggestions.length > 0}-->
-      <!--        <ul class="list-group position-absolute w-100 mt-1 shadow">-->
-      <!--          {#each destinationSuggestions as suggestion}-->
-      <!--            <li class="list-group-item list-group-item-action" on:click={() => selectSuggestion(suggestion, 'destination')} role="button">-->
-      <!--              {suggestion.display_name}-->
-      <!--            </li>-->
-      <!--          {/each}-->
-      <!--        </ul>-->
-      <!--      {/if}-->
-      <!--    </div>-->
-      <!--  </div>-->
-
-
 
       <!-- Input Fields -->
       <div class="row mt-3">
@@ -197,6 +164,11 @@
           Calculate Distance <i class="bi bi-arrow-right ms-2"></i>
         </button>
       </div>
+
+      {#if sourceLat && sourceLng && destLat && destLng}
+        <div bind:this={mapDiv} style="height: 400px; width: 100%;" class="mt-4"></div>
+      {/if}
+
 
       <!-- Error Message -->
       <!--{#if errorMessage}-->
