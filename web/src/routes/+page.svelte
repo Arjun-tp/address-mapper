@@ -167,6 +167,9 @@
 
       {#if sourceLat && sourceLng && destLat && destLng}
         <div bind:this={mapDiv} style="height: 400px; width: 100%;" class="mt-4"></div>
+        <p>
+          <b>* If there are no drive routes found between the location, the map won't show the route</b>
+        </p>
       {/if}
 
 
