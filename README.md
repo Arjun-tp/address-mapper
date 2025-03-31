@@ -4,6 +4,8 @@
 Address-Mapper is a **full-stack web application** built with **SvelteKit (Frontend)**, **Node.js + Express (Backend)**, and **MongoDB (Database)**. It calculates the distance between addresses and provides a user-friendly interface.
 This project supports **Docker deployment**, making it easy to set up locally and in production.
 
+![distanceCalculator.png](assets/distanceCalculator.png)
+
 ## Getting Started
 
 > Pre-requisite: Docker client should be running, envs should be added ( this will just make sure the third party apis are working )
