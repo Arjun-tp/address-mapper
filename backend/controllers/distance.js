@@ -47,6 +47,11 @@ const getCoordinates = async (
   }
 }
 
+/**
+ * @param placeName
+ * @returns {Promise<{status: string, data: {lat: *, lon: *}}|null>}
+ */
+
 const getCoordinatesFromGoogle = async (placeName) => {
   try {
     const response = await axios.get(apiUrls.GOOGLE_GEOCODING, {
