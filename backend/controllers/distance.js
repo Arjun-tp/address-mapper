@@ -118,6 +118,20 @@ export const calculateDistance = async (req, res) => {
   try {
     const { source, destination } = req.body
 
+    const ip =
+      req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+      req.socket.remoteAddress ||
+      req.ip
+
+    const userAgent = req.headers['user-agent']
+
+    const geoRes = await axios.get(`https://ipapi.co/${ip}/json/`)
+    const location = {
+      city: geoRes.data.city,
+      region: geoRes.data.region,
+      country: geoRes.data.country_name,
+    }
+
     // Prevent same source and destination
     if (source.toLowerCase() === destination.toLowerCase()) {
       return res
@@ -238,6 +252,11 @@ export const calculateDistance = async (req, res) => {
         lng: destCoords.data.lon,
       },
       distanceInKMs: (distanceMeters / 1000).toFixed(3),
+      userMeta: {
+        ip,
+        userAgent,
+        location,
+      },
     })
 
     await saveLocation.save()

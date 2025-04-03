@@ -12,6 +12,15 @@ const locationSchema = new mongoose.Schema({
     lng: { type: Number, required: true },
   },
   distanceInKMs: { type: String, required: true },
+  userMeta: {
+    ip: { type: String },
+    userAgent: { type: String },
+    location: {
+      city: { type: String },
+      region: { type: String },
+      country: { type: String },
+    },
+  },
   createdAt: { type: Date, default: Date.now },
 })
 
